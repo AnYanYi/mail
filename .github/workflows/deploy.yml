@@ -1,0 +1,48 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Worker
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+        
+    - name: Install frontend dependencies
+      working-directory: ./mail-vue
+      run: pnpm install
+      
+    - name: Build frontend
+      working-directory: ./mail-vue
+      run: pnpm build
+      
+    - name: Install worker dependencies
+      working-directory: ./mail-worker
+      run: pnpm install
+      
+    - name: Deploy to Cloudflare Workers
+      working-directory: ./mail-worker
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      run: pnpm deploy
+      
+    - name: Initialize Database (if needed)
+      if: ${{ secrets.INIT_URL != '' }}
+      run: |
+        curl -X POST "${{ secrets.INIT_URL }}"
