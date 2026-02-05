@@ -1,0 +1,28 @@
+# 依赖和构建产物
+node_modules/
+dist/
+build/
+*.min.js
+
+# 配置文件
+.wrangler/
+.vite/
+.cache/
+
+# 第三方库
+public/tinymce/
+
+# 日志
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
